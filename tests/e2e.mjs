@@ -1,0 +1,42 @@
+// End-to-end smoke + TEST 12 (navigation does not reset simulation). Usage: node tests/e2e.mjs [baseUrl] [shotDir]
+import { createRequire } from 'module';
+const { chromium } = createRequire(import.meta.url)('playwright');
+const base = process.argv[2] ?? 'http://localhost:4173';
+const shots = process.argv[3];
+const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+const errors = [];
+page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+const clock = async () => (await page.locator('.topbar .muted.small').first().textContent()).split('·')[0].trim();
+const shot = async (n) => { if (shots) await page.screenshot({ path: `${shots}/${n}.png` }); };
+await page.goto(base + '/#/');
+await page.waitForSelector('.ov-card');
+await shot('01-dashboard');
+await page.locator('.topbar').getByRole('button', { name: /Start/ }).click();
+await page.getByRole('button', { name: 'More controls ▾' }).click();
+await page.locator('.seg button', { hasText: '1 h/s' }).click();
+await page.waitForTimeout(1500);
+const t1 = await clock();
+const routes = ['/detailed', '/sump/A', '/rainfall', '/pumps', '/scenarios', '/alerts', '/analytics', '/reports', '/config', '/validation', '/integration', '/twin'];
+for (const r of routes) {
+  await page.goto(base + '/#' + r);
+  await page.waitForTimeout(r === '/twin' ? 3500 : 900);
+  await shot(r.replace(/\//g, '_'));
+}
+const t2 = await clock();
+console.log('clock before nav', t1, 'after nav', t2);
+await page.goto(base + '/#/validation');
+await page.getByRole('button', { name: 'Run test suite' }).click();
+await page.waitForTimeout(3000);
+const summary = await page.locator('.panel-head .ok, .panel-head .err').first().textContent();
+console.log('In-browser suite:', summary);
+const fails = await page.locator('summary b.err').count();
+await shot('validation-results');
+console.log('failed tests in browser:', fails);
+await page.goto(base + '/#/sump/B');
+await page.waitForTimeout(800);
+await shot('sump-B');
+console.log('errors:', errors.length ? errors.slice(0, 15).join('\n') : 'none');
+await browser.close();
+process.exit(errors.length || fails ? 1 : 0);
