@@ -19,6 +19,7 @@ import { predictLive, constantEstimate, type LivePrediction } from '../engine/pr
 import { liveRainFn, rainfallAt } from '../engine/rainfall';
 import { evaluateAlerts, type AlertItem } from '../engine/alerts';
 import { nextPumpTag, effectiveCapacity } from '../engine/pumps';
+import { defaultTwinConfig, type TwinConfig } from '../engine/mine';
 
 export type HistoryPoint = Record<string, number>;
 
@@ -53,6 +54,7 @@ export interface AppState {
   pumps: PumpConfig;
   rainfall: RainfallInputs;
   thresholds: Thresholds;
+  twin: TwinConfig;
   sim: SimState;
   history: HistoryPoint[];
   runId: number;
@@ -104,6 +106,7 @@ export interface AppState {
   acknowledgeAlert: (id: string) => void;
   clearAlertLog: () => void;
   recordNav: (path: string) => void;
+  updateTwin: (patch: Partial<TwinConfig>, msg?: string) => void;
   recompute: () => void;
 }
 
@@ -219,6 +222,11 @@ export const useStore = create<AppState>()(persist((set, get) => {
     runs: [],
     navLog: [],
     derived: { live: null, alerts: [], rain24: 0, computedAt: 0 },
+    twin: defaultTwinConfig(),
+    updateTwin: (patch, msg) => {
+      set({ twin: { ...get().twin, ...patch } });
+      audit('3D twin', msg ?? '3D twin settings: ' + Object.entries(patch).map(([k, v]) => `${k} → ${k === 'layers' ? '(lithology table)' : show(v)}`).join('; '));
+    },
 
     start: () => { if (!get().running) { set({ running: true }); audit('Simulation', `Simulation started/resumed at T+${get().sim.t.toFixed(2)} h`); } },
     pause: () => { if (get().running) { set({ running: false }); audit('Simulation', `Simulation paused at T+${get().sim.t.toFixed(2)} h`); } },
@@ -483,7 +491,7 @@ export const useStore = create<AppState>()(persist((set, get) => {
   version: 1,
   storage: storage as PersistStorage<any>,
   partialize: (s) => ({
-    config: s.config, pumps: s.pumps, rainfall: s.rainfall, thresholds: s.thresholds, sim: s.sim, history: s.history,
+    config: s.config, pumps: s.pumps, rainfall: s.rainfall, thresholds: s.thresholds, twin: s.twin, sim: s.sim, history: s.history,
     runId: s.runId, speed: s.speed, alertLog: s.alertLog.slice(0, 300), audit: s.audit.slice(0, 800), readings: s.readings,
     savedConfigs: s.savedConfigs, runs: s.runs, navLog: s.navLog,
   }) as any,

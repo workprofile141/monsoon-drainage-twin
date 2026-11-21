@@ -18,6 +18,7 @@ import ReportsPage from './pages/Reports';
 import IntegrationPage from './pages/Integration';
 
 const TwinPage = lazy(() => import('./pages/Twin'));
+const TwinHome = lazy(() => import('./pages/TwinHome'));
 
 /** The simulation clock lives here — above the router — so navigation never resets it. */
 function SimulationLoop() {
@@ -90,7 +91,7 @@ function SimBar() {
   );
 }
 
-const MAIN_NAV: [string, string][] = [['/', '🏠  Overview'], ['/twin', '🧊  3D view'], ['/sump/A', '💧  Nilkanth A'], ['/sump/B', '💧  Nilkanth B'], ['/sump/C', '💧  KNR C'], ['/sump/D', '💧  Departmental D']];
+const MAIN_NAV: [string, string][] = [['/', '⛏️  Sump digital twin'], ['/overview', '🏠  Overview'], ['/twin', '🧊  All sumps 3D'], ['/sump/A', '💧  Nilkanth A'], ['/sump/B', '💧  Nilkanth B'], ['/sump/C', '💧  KNR C'], ['/sump/D', '💧  Departmental D']];
 const MORE_NAV: ([string, string] | string)[] = [
   'Controls', ['/rainfall', 'Rainfall simulator'], ['/pumps', 'Pump management'], ['/scenarios', 'What-if scenarios'],
   'Monitoring', ['/detailed', 'Detailed dashboard'], ['/alerts', 'Alerts & thresholds'], ['/analytics', 'Analytics'], ['/reports', 'Reports'],
@@ -129,7 +130,8 @@ export default function App() {
         <main className="main">
           <Suspense fallback={<div className="muted">Loading 3D engine…</div>}>
             <Routes>
-              <Route path="/" element={<Overview />} />
+              <Route path="/" element={<TwinHome />} />
+              <Route path="/overview" element={<Overview />} />
               <Route path="/detailed" element={<Dashboard />} />
               <Route path="/sump/:id" element={<SumpPage />} />
               <Route path="/twin" element={<TwinPage />} />

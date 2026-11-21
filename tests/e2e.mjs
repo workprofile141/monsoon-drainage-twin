@@ -11,7 +11,7 @@ page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + 
 const clock = async () => (await page.locator('.topbar .muted.small').first().textContent()).split('·')[0].trim();
 const shot = async (n) => { if (shots) await page.screenshot({ path: `${shots}/${n}.png` }); };
 await page.goto(base + '/#/');
-await page.waitForSelector('.ov-card');
+await page.waitForSelector('.th-box');
 await shot('01-dashboard');
 await page.locator('.topbar').getByRole('button', { name: /Start/ }).click();
 await page.getByRole('button', { name: 'More controls ▾' }).click();

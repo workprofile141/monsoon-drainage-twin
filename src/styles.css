@@ -191,3 +191,25 @@ code { background: rgba(118, 128, 150, 0.14); padding: 1px 5px; border-radius: 6
 .verdict.good { background: rgba(31, 157, 85, 0.12); color: #15703c; }
 .verdict.hold { background: rgba(240, 190, 30, 0.16); color: #7a5600; }
 .verdict.bad { background: rgba(229, 56, 59, 0.1); color: #b4161b; }
+
+/* ---------- Immersive sump twin (home) ---------- */
+.twin-home { position: relative; height: calc(100vh - 118px); min-height: 640px; margin: -6px -8px -40px; border-radius: 26px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: linear-gradient(#dbe8f8, #eef4fb); }
+.th-box { position: absolute; z-index: 2; border-radius: 20px; padding: 12px 14px; background: rgba(255, 255, 255, 0.66); -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 10px 34px rgba(30, 50, 100, 0.16); }
+.th-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.th-kpi { background: rgba(255, 255, 255, 0.62); border-radius: 12px; padding: 6px 8px; min-width: 0; }
+.th-kpi .k { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+.th-kpi .v { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.th-kpi .s { font-size: 10.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.th-dock { left: 50%; transform: translateX(-50%); bottom: 14px; width: min(1320px, calc(100% - 28px)); }
+.th-dock-grid { display: grid; grid-template-columns: 220px minmax(0, 1.5fr) 230px minmax(0, 1.2fr); gap: 16px; align-items: start; }
+@media (max-width: 1250px) { .th-dock-grid { grid-template-columns: 1fr 1fr; } }
+.th-pumps { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 2px; }
+.th-pump { min-width: 150px; background: rgba(255, 255, 255, 0.7); border-radius: 14px; padding: 8px 10px; border: 1px solid rgba(60, 72, 100, 0.12); }
+.th-pump.ok { box-shadow: inset 0 3px 0 var(--st-normal); }
+.th-pump.bad { box-shadow: inset 0 3px 0 var(--st-emergency); background: rgba(255, 235, 235, 0.8); }
+.th-pump .seg button { padding: 2px 8px; }
+.th-times { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 4px; }
+.th-times > div { background: rgba(255, 255, 255, 0.62); border-radius: 10px; padding: 4px 6px; display: flex; flex-direction: column; min-width: 0; }
+.th-times span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.th-times b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.th-times i { font-size: 10px; color: var(--text-muted); font-style: normal; white-space: nowrap; }
